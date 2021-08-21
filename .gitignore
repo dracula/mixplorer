@@ -1,0 +1,6 @@
+# file/dir temp
+*.bat
+*.bak
+*.zip
+.vscode
+private
