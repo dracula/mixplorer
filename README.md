@@ -2,7 +2,7 @@
 
 > A dark theme for [MiXplorer](https://mixplorer.com/).
 
-![Screenshot](./screenshot.png)
+![Screenshot](./Screenshot.png)
 
 ## Install
 
