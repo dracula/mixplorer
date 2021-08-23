@@ -2,7 +2,7 @@
 
 #### Install manually
 
-- Download the [dracula-mixplorer.mit](https://github.com/uyrLab/dracula-mixplorer/releases/download/v0.1.0/dracula-mixplorer.mit) file from the [latest release](https://github.com/uyrLab/dracula-mixplorer/releases).
+- Download the [dracula-mixplorer.mit](https://github.com/kybo15/dracula-mixplorer/releases/download/v0.1.0/dracula-mixplorer.mit) file from the [latest release](https://github.com/kybo15/dracula-mixplorer/releases).
 
 #### Activating theme
 
