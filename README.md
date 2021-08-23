@@ -1,6 +1,9 @@
 # Dracula for [MiXplorer](https://mixplorer.com/)
 
 > A dark theme for [MiXplorer](https://mixplorer.com/).
+
+![Screenshot](./screenshot.png)
+
 ## Install
 
 All instructions can be found at [draculatheme.com/mixplorer](https://draculatheme.com/mixplorer).
