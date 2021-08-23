@@ -1,0 +1,21 @@
+# EditorConfig
+root = true
+
+# package.json or .travis.yml
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
+
+# XML
+[*.{xml,xsd}]
+max_line_length = off
+end_of_line = lf
+indent_style = space
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_size = 2
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
