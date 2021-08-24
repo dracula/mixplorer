@@ -74,7 +74,7 @@
   <entry key="tint_divider_popup_list">#00000000</entry>
   <entry key="tint_divider_settings">#00000000</entry>
 
-  <!-- <entry key="tint_file">#000003E9</entry> -->
+  <entry key="tint_file">#000003E9</entry>
   <!-- <entry key="tint_folder">#FF6272A4</entry> -->
   <entry key="tint_grid_item">#000003E9</entry>
   <!-- <entry key="tint_icon_bookmark">#000003E9</entry> -->
