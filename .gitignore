@@ -1,5 +1,6 @@
 # excluded files only for test and backup files
 *.7z
+*.zip
 *.bat
 *.bak
 *.lnk

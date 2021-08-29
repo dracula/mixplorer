@@ -3,6 +3,7 @@
 
 # These files are binary and should be left untouched
 *.7z binary
+*.zip binary
 *.png binary
 *.mit binary
 
