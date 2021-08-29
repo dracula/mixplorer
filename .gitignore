@@ -1,2 +1,8 @@
+# excluded files only for test and backup files
+*.bat
+*.bak
+
+# excluded only for local git repository and backup folder
+.vscode
 anim
 testing
