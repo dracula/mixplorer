@@ -3,6 +3,6 @@
 *.bak
 
 # excluded only for local git repository and backup folder
-.vscode
 anim
-testing
+.vscode
+TestLib
