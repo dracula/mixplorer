@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <properties>
+  
+  <!-- Credits -->
   <entry key="title">Dracula</entry>
   <entry key="author">kybo15</entry>
+
   <!-- General -->
   <entry key="menu_overlap_anchor">false</entry>
   <entry key="bold_grid_primary_text">true</entry>
