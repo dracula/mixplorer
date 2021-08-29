@@ -2,8 +2,15 @@
 *.7z
 *.bat
 *.bak
+*.lnk
 
 # excluded only for local git repository and backup folder
 anim
 .vscode
 TestLib
+
+# cache files on windows
+Thumbs.db
+Thumbs.db:encryptable
+[Dd]esktop.ini
+$RECYCLE.BIN/
