@@ -1,0 +1,11 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# These files are binary and should be left untouched
+*.7z binary
+*.png binary
+*.mit binary
+
+# These files are text and should be normalized (Convert crlf => lf)
+*.mic text
+*.xml text
