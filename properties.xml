@@ -115,9 +115,9 @@
   <entry key="density">320</entry>
   <entry key="light_status_bar">false</entry>
   <entry key="light_navigation_bar">false</entry>
-  <entry key="thumb_rounded_corner">50</entry> <!-- percent -->
   <entry key="thumb_size">90</entry> <!-- dp -->
   <entry key="thumb_quality">90</entry> <!-- percent -->
+  <entry key="thumb_rounded_corner">50</entry> <!-- percent -->
   <entry key="background_dim">100</entry> <!-- (0~100) -->
   <entry key="uppercase_buttons">true</entry>
   <!-- <entry key="wallpaper">true</entry> -->
