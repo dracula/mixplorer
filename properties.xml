@@ -43,38 +43,49 @@
   
   <entry key="text_breadcrumb">#FF6272A4</entry>
   <entry key="text_breadcrumb_selected">#FFF8F8F2</entry>
+
   <entry key="text_button">#FF50FA7B</entry>
   <entry key="text_button_inverse">#FFFF79C6</entry>
+  
   <entry key="text_edit_box">#FFF8F8F2</entry>
   <entry key="text_edit_box_hint">#FFF8F8F2</entry>
   <entry key="text_edit_selection_background">#FFFF79C6</entry>
   <entry key="text_edit_selection_foreground">#FF000000</entry>
+  
   <entry key="text_filter_box">#FFF8F8F2</entry>
   <entry key="text_filter_box_hint">#FF6272A4</entry>
+  
   <entry key="text_grid_primary">#FFF1FA8C</entry>
   <entry key="text_grid_primary_inverse">#FF8BE9FD</entry>
   <entry key="text_grid_secondary">#FF6272A4</entry>
   <entry key="text_grid_secondary_inverse">#FFF8F8F2</entry>
+
   <entry key="text_link">#FFF8F8F2</entry>
   <entry key="text_link_pressed">#FF6272A4</entry>
+  
   <entry key="text_popup_header">#FFF8F8F2</entry>
   <entry key="text_popup_primary">#FFF8F8F2</entry>
   <entry key="text_popup_primary_inverse">#FFF8F8F2</entry>
   <entry key="text_popup_secondary">#FFF8F8F2</entry>
   <entry key="text_popup_secondary_inverse">#FFF8F8F2</entry>
+  
   <entry key="text_scroll_overlay">#FF000000</entry>
+  
   <entry key="tint_bar_action_icons">#FFFF79C6</entry>
   <entry key="tint_bar_main_icons">#FF6272A4</entry>
   <entry key="tint_bar_tab_icons">#FFFF79C6</entry>
   <entry key="tint_bar_tools_icons">#FFF8F8F2</entry>
+  
   <entry key="tint_divider_files">#00000000</entry>
   <entry key="tint_divider_popup_list">#00000000</entry>
   <entry key="tint_divider_settings">#00000000</entry>
+
   <!-- <entry key="tint_file">#000003E9</entry> -->
   <!-- <entry key="tint_folder">#FF6272A4</entry> -->
   <!-- <entry key="tint_grid_item">#000003E9</entry> -->
   <!-- <entry key="tint_icon_bookmark">#000003E9</entry> -->
   <!-- <entry key="tint_icon_signs">#FF8BE9FD</entry> -->
+  
   <entry key="tint_navigation_bar">#FF1A1B23</entry>
   <entry key="tint_notification_buttons">#FF999999</entry>
   <entry key="tint_page_separator">#FFFF79C6</entry>
@@ -104,9 +115,9 @@
   <entry key="density">320</entry>
   <entry key="light_status_bar">false</entry>
   <entry key="light_navigation_bar">false</entry>
-  <entry key="thumb_rounded_corner">50</entry> <!-- percent -->
   <entry key="thumb_size">90</entry> <!-- dp -->
   <entry key="thumb_quality">90</entry> <!-- percent -->
+  <entry key="thumb_rounded_corner">50</entry> <!-- percent -->
   <entry key="background_dim">100</entry> <!-- (0~100) -->
   <entry key="uppercase_buttons">true</entry>
   <!-- <entry key="wallpaper">true</entry> -->
