@@ -2,10 +2,11 @@
 * text=auto
 
 # These files are binary and should be left untouched
-*.7z binary
-*.zip binary
-*.png binary
-*.mit binary
+*.zip -text
+*.mit -text
+*.exe -text
+*.png -text
+*.jpg -text
 
 # These files are text and should be normalized (Convert crlf => lf)
 *.mic text
