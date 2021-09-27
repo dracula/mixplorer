@@ -1,17 +1,14 @@
-# excluded files only for test and backup files
-*.7z
+# files test
 *.zip
 *.bat
+*.log
 *.bak
+*.ini
 *.lnk
+*tmp*
+*test*
 
-# excluded only for local git repository and backup folder
-anim
+# local repo
 .vscode
-TestLib
-
-# cache files on windows
-Thumbs.db
-Thumbs.db:encryptable
-[Dd]esktop.ini
-$RECYCLE.BIN/
+release
+tools
