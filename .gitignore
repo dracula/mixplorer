@@ -1,14 +1,11 @@
-# files test
-*.zip
+# local
 *.bat
-*.log
+*.cmd
 *.bak
-*.ini
-*.lnk
-*tmp*
-*test*
+*.mit
+*.zip
+/*.txt
 
-# local repo
 .vscode
-release
-tools
+/tests
+/tools
