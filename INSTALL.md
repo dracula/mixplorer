@@ -11,4 +11,4 @@ Download the `dracula-mixplorer.mit` file from the latest [release](https://gith
 
 #### Troubleshooting
 
-If the theme is not successfully applied, follow this method [here]()
+If the theme is not successfully applied, follow this method [here](https://github.com/dracula/mixplorer/wiki#Troubleshooting-themes)
