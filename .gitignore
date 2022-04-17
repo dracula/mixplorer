@@ -1,11 +1,4 @@
-# local
-*.bat
-*.cmd
 *.bak
 *.mit
 *.zip
-/*.txt
-
-.vscode
-/tests
-/tools
+/tools/*.jpeg
