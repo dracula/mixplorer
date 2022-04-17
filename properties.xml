@@ -19,7 +19,7 @@
   <entry key="bg_color_player">#FFFF79C6</entry>
   <entry key="bg_page">#FF282A36</entry>
 
-  <!-- Background -->
+  <!-- Highlight -->
   <entry key="highlight_bar_action_buttons">#FFFF79C6</entry>
   <entry key="highlight_bar_main_buttons">#FFFF79C6</entry>
   <entry key="highlight_bar_tab_buttons">#FFFF79C6</entry>
@@ -36,7 +36,7 @@
   <entry key="syntax_string">#FFF8F8F2</entry>
   <entry key="syntax_symbol">#FFF8F8F2</entry>
 
-  <!-- Text colors -->
+  <!-- Bar text-->
   <entry key="text_bar_main_primary">#FF50FA7B</entry>
   <entry key="text_bar_main_secondary">#FFF8F8F2</entry>
   <entry key="text_bar_tab_default">#FF6272A4</entry>
@@ -46,14 +46,14 @@
   <entry key="text_breadcrumb">#FF6272A4</entry>
   <entry key="text_breadcrumb_selected">#FFF8F8F2</entry>
 
-  <!-- Button -->
+  <!-- Button text -->
   <entry key="text_button">#FF50FA7B</entry>
   <entry key="text_button_inverse">#FFFF79C6</entry>
 
   <!-- Selection -->
   <entry key="text_edit_box">#FFF8F8F2</entry>
   <entry key="text_edit_box_hint">#FFF8F8F2</entry>
-  <entry key="text_edit_selection_background">#44475A</entry>
+  <entry key="text_edit_selection_background">#FF44475A</entry>
   <entry key="text_edit_selection_foreground">#FF000000</entry>
 
   <entry key="text_filter_box">#FFF8F8F2</entry>
@@ -64,7 +64,6 @@
   <entry key="text_grid_secondary">#FF6272A4</entry>
   <entry key="text_grid_secondary_inverse">#FFF8F8F2</entry>
 
-  <!-- Link -->
   <entry key="text_link">#FFF8F8F2</entry>
   <entry key="text_link_pressed">#FF6272A4</entry>
 
@@ -120,6 +119,8 @@
 
   <!-- Extras -->
   <entry key="density">320</entry>
+  <entry key="light_status_bar">false</entry>
+  <entry key="light_navigation_bar">false</entry>
   <entry key="thumb_size">90</entry>  <!-- dp -->
   <entry key="thumb_quality">90</entry>  <!-- percent -->
   <entry key="thumb_rounded_corner">50</entry>  <!-- percent -->
