@@ -110,11 +110,11 @@
   <entry key="splash_screen">#000000</entry>
 
   <!-- Fonts -->
-  <entry key="font_primary">fonts/GoogleSans-Regular.ttf</entry>
-  <entry key="font_secondary">fonts/GoogleSans-Regular.ttf</entry>
-  <entry key="font_title">fonts/GoogleSans-Regular.ttf</entry>
-  <entry key="font_popup">fonts/GoogleSans-Regular.ttf</entry>
-  <entry key="font_editor">fonts/FiraCode-Regular.ttf</entry>  <!-- support ligatures -->
+  <entry key="font_primary">fonts/OpenSans-Regular.ttf</entry>
+  <entry key="font_secondary">fonts/OpenSans-Regular.ttf</entry>
+  <entry key="font_title">fonts/OpenSans-Regular.ttf</entry>
+  <entry key="font_popup">fonts/OpenSans-Regular.ttf</entry>
+  <entry key="font_editor">fonts/FiraCode-Retina.ttf</entry>  <!-- support ligatures -->
   <entry key="font_hex">fonts/SourceCodePro-Regular.ttf</entry>
 
   <!-- Extras -->
