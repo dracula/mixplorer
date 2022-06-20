@@ -8,7 +8,7 @@
 ```cmd
 git clone https://github.com/dracula/mixplorer.git
 cd mixplorer
-.\tools\build.bat
+.\tools\compile.bat
 ```
 
 ## Credits
