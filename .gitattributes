@@ -4,6 +4,7 @@
 *.xml text
 *.mic text
 
+*.ttf -text
 *.exe -text
 *.png -text
 *.jpeg -text
