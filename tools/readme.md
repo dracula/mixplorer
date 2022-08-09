@@ -3,7 +3,7 @@
 
 ![Overview](./overview.jpeg)
 
-## Compile
+## Build
 
 ```cmd
 git clone https://github.com/dracula/mixplorer.git
