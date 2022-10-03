@@ -6,9 +6,11 @@ Download the `dracula-mixplorer.mit` file from the latest release [here](https:/
 
 #### Activating theme
 
-Open MiXplorer, click the `dracula-mixplorer.mit` file then select `Import`
+Open MiXplorer, select the `dracula-mixplorer.mit` file then select `Import`
 
 #### Troubleshooting
 
-If the theme is not applying properly follow this method [here](https://www.tumblr.com/sionta/697097040919969792/how-to-fix-mixplorer-theme-not-applied?source=share)
-
+<details>
+    <summary>If the theme is not applying properly, follow this method</summary>
+    <img src="./fixtheme.gif" alt="Fix Theme">
+</details>
