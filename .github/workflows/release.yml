@@ -1,0 +1,31 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install package
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: librsvg2-bin p7zip-full
+      - name: Build package
+        shell: pwsh
+        run: ./scripts/build.ps1 -n ${{ github.repository }} -f -vb
+      - name: Create release
+        uses: anton-yurchenko/git-release@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGELOG_FILE: "CHANGELOG.md"
+          ALLOW_EMPTY_CHANGELOG: "true"
+        with:
+          args: build/*

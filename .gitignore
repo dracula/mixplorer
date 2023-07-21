@@ -1,4 +1,9 @@
-/.history
-*.bak
-*.mit
+build
+tests
+bin/*/*
+res/drawable/*.png
+*.7z
 *.zip
+*.mit
+*.tmp
+*.lnk
