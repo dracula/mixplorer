@@ -1,10 +1,13 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-
-*.xml text
-*.mic text
-
+*.mic  text
+*.svg  text
+*.7z  -text
+*.zip -text
+*.mit -text
 *.ttf -text
 *.exe -text
+*.ai  -text
+*.psd -text
 *.png -text
-*.jpeg -text
+*.jpg -text

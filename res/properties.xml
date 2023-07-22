@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <properties>
 
-<!-- fonts -->
+  <!-- Once upon a time...  -->
+  <entry key="title">Dracula</entry>
+  <entry key="author">sionta</entry>
+
+  <!-- fonts -->
   <entry key="font_editor">fonts/FiraCode-Retina.ttf</entry> <!-- ligatures -->
   <!-- <entry key="font_primary">fonts/OpenSans-Regular.ttf</entry> --> <!-- sans-serif -->
   <!-- <entry key="font_secondary">fonts/OpenSans-Regular.ttf</entry> --> <!-- sans-serif -->
@@ -9,15 +13,13 @@
   <!-- <entry key="font_popup">fonts/OpenSans-Regular.ttf</entry> --> <!-- sans-serif -->
   <!-- <entry key="font_hex">fonts/IBMPlexMono-Regular.ttf</entry> --> <!-- monospaces -->
 
-
-<!-- main bar -->
+  <!-- main bar -->
   <entry key="tint_status_bar">#191A21</entry>
   <entry key="bg_bar_main">#191A21</entry>
   <entry key="text_bar_main_primary">#F8F8F2</entry>
   <entry key="text_bar_main_secondary">#6272A4</entry>
 
-
-<!-- main tab -->
+  <!-- main tab -->
   <entry key="bg_bar_tab">#282A36</entry>
   <entry key="text_bar_tab_default">#6272A4</entry>
   <entry key="text_bar_tab_selected">#FF79C6</entry>
@@ -27,8 +29,7 @@
   <entry key="text_breadcrumb_selected">#6272A4</entry>
   <entry key="text_breadcrumb">#6272A4</entry>
 
-
-<!-- main page -->
+  <!-- main page -->
   <entry key="bg_page">#282A36</entry>
   <entry key="text_grid_primary">#F8F8F2</entry>
   <entry key="text_grid_secondary">#6272A4</entry>
@@ -36,21 +37,18 @@
   <!-- <entry key="tint_icon_signs">#FFB86C</entry> -->
   <!-- <entry key="tint_divider_files">#282A36</entry> -->
 
-
-<!-- main tool -->
+  <!-- main tool -->
   <entry key="bg_bar_tools">#191A21</entry>
   <entry key="tint_bar_tools_icons">#F8F8F2</entry>
   <entry key="tint_navigation_bar">#191A21</entry>
 
-
-<!-- actions -->
+  <!-- actions -->
   <entry key="bg_bar_action">#191A21</entry>
   <entry key="bg_color_player">#282A36</entry>
   <entry key="tint_bar_main_icons">#F8F8F2</entry>
   <entry key="tint_bar_action_icons">#F8F8F2</entry>
 
-
-<!-- popups rename/search -->
+  <!-- popups rename/search -->
   <entry key="tint_popup_bg">#282A36</entry>
   <entry key="tint_popup_icons">#F8F8F2</entry>
   <entry key="tint_popup_controls">#F8F8F2</entry>
@@ -62,8 +60,7 @@
   <entry key="text_filter_box_hint">#6272A4</entry>
   <entry key="text_filter_box">#F8F8F2</entry>
 
-
-<!-- pressed -->
+  <!-- pressed -->
   <entry key="highlight_bar_action_buttons">#FF79C6</entry>
   <entry key="highlight_bar_main_buttons">#FF79C6</entry>
   <entry key="highlight_bar_tab_buttons">#FF79C6</entry>
@@ -74,16 +71,14 @@
   <entry key="text_link_pressed">#FF79C6</entry>
   <entry key="text_link">#F8F8F2</entry>
 
-
-<!-- scrolled/refreshed -->
+  <!-- scrolled/refreshed -->
   <entry key="text_scroll_overlay">#F8F8F2</entry>
   <entry key="tint_scroll_thumbs">#FF79C6</entry>
   <entry key="tint_progress_bar">#FF79C6</entry>
   <entry key="tint_progress_track">#6272A4</entry>
   <entry key="tint_page_separator">#FF79C6</entry>
 
-
-<!-- text/code editor -->
+  <!-- text/code editor -->
   <entry key="syntax_attr_value">#F1FA8C</entry>
   <entry key="syntax_attr">#50FA7B</entry>
   <entry key="syntax_comment">#6272A4</entry>
@@ -91,7 +86,6 @@
   <entry key="syntax_string">#F8F8F2</entry>
   <entry key="syntax_symbol">#F8F8F2</entry>
   <entry key="text_edit_selection_background">#44475A</entry>
-
 
   <entry key="text_button_inverse">#FF79C6</entry>
   <entry key="text_button">#50FA7B</entry>
@@ -112,8 +106,7 @@
   <!-- <entry key="tint_file">#6272A4</entry> -->
   <!-- <entry key="tint_icon_bookmark">#F8F8F2</entry> -->
 
-
-<!-- extras -->
+  <!-- extras -->
   <entry key="density">320</entry>
   <entry key="thumb_quality">75</entry> <!-- (0~100) -->
   <entry key="thumb_rounded_corner">50</entry> <!-- Percent -->
@@ -127,8 +120,4 @@
   <!-- <entry key="fullscreen">false</entry> -->
   <!-- <entry key="wallpaper">true</entry> -->
   <!-- <entry key="translucent_system_bars">false</entry> -->
-
-  <entry key="title">Dracula</entry>
-  <entry key="author">sionta</entry>
-
 </properties>
