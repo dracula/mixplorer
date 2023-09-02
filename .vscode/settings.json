@@ -1,0 +1,19 @@
+{
+  "editor.formatOnPaste": true,
+  "editor.linkedEditing": true,
+  "editor.renderWhitespace": "all",
+  "editor.wordWrap": "off",
+  "markdownlint.config": {
+    "MD024": false,
+    "MD041": false
+  },
+  "powershell.analyzeOpenDocumentsOnly": true,
+  "powershell.codeFormatting.addWhitespaceAroundPipe": true,
+  "powershell.codeFormatting.alignPropertyValuePairs": true,
+  "powershell.codeFormatting.autoCorrectAliases": true,
+  "powershell.codeFormatting.preset": "OTBS",
+  "powershell.codeFormatting.useConstantStrings": true,
+  "powershell.codeFormatting.useCorrectCasing": true,
+  "powershell.codeFormatting.whitespaceBetweenParameters": true,
+  "workbench.sideBar.location": "right"
+}

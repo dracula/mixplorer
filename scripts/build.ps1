@@ -1,156 +1,250 @@
-#Requires -PSEdition Core
-
+#!/usr/bin/pwsh -c
 <#
 .SYNOPSIS
-    Build dracula theme
+    Build Dracula theme.
 .DESCRIPTION
-    A tool to build Dracula theme for MiXplorer
+    A tool to build Dracula theme for MiXplorer.
 .EXAMPLE
-    ./build.ps1 -Name dracula -Verbose
+    ./build.ps1 -Name Dracula -Accent Purple -Verbose
+    This result in a Dracula.mit theme with a Purple accent and
+    by default the Accent is Pink.
 .NOTES
-    Requires 7-zip and rsvg-convert or cairosvg
+    rsvg-convert or cairosvg is required to convert svg to png format.
 .LINK
     https://draculatheme.com/mixplorer
 #>
-
 [CmdletBinding()]
 param (
-    [Parameter(ValueFromPipeline)][Alias('n')][string]$Name,
-    [Parameter()][Alias('f')][switch]$Force
+    [Alias('n')][string]$Name,
+    [ValidateSet('Pink', 'Purple')]
+    [Alias('a')][string]$Accent = 'Pink',
+    [Alias('f')][switch]$Force
 )
-
-Set-StrictMode -Off
-
-Write-Verbose 'Validating...'
-
-$ProgressPreference = 'SilentlyContinue'
-$ErrorActionPreference = 'Stop'
-$PSDefaultParameterValues['*:Encoding'] = 'utf8'
-
-$ROOT_PATH = Resolve-Path $(Join-Path $PSScriptRoot '..')
-
-Set-Location $ROOT_PATH
-
-$TOOLS_DIR = Join-Path $ROOT_PATH 'bin'
-$BUILD_DIR = Join-Path $ROOT_PATH 'build'
-$ICONS_DIR = Join-Path $ROOT_PATH 'res' 'drawable'
-
-$BUILD_BASENAME = if ($Name) {
-    $Name -replace '/', '-'
-}
-elseif ($env:BASE_NAME) {
-    $env:BASE_NAME -replace '/', '-'
-}
-else {
-    'build-' + [System.Guid]::NewGuid().Guid.Split('-')[1]
-}
-
-Write-Verbose "Building name: $BUILD_BASENAME"
-
-$BUILD_FILENAME = Join-Path $BUILD_DIR $BUILD_BASENAME
-
-foreach ($dir in $($BUILD_DIR, $TOOLS_DIR)) {
-    if (!(Test-Path $dir -PathType Container)) {
-        New-Item $dir -ItemType Directory -Force
+begin {
+    # [System.Console]::WriteLine('Initializing...')
+    [System.IO.Directory]::SetCurrentDirectory("$PSScriptRoot/../")
+    $ROOT_PATH = [System.IO.Directory]::GetCurrentDirectory()
+    if ($Accent -eq 'Purple') {
+        $titleName = 'Dracula Purple'; $accentHex = '#BD93F9'
+    } else {
+        $titleName = 'Dracula'; $accentHex = '#FF79C6'
     }
-}
-
-$env:PATH = $env:PATH -replace ($TOOLS_DIR + [System.IO.Path]::PathSeparator), ''
-$env:PATH = ($TOOLS_DIR + [System.IO.Path]::PathSeparator) + $env:PATH
-
-if (!(Get-Command '7z' -ErrorAction SilentlyContinue)) {
-    if (!$IsWindows) { Write-Warning "Need to install '7-Zip'."; exit 1 }
-    try {
-        Write-Verbose 'Downloading 7-Zip...'
-        $site_url = 'https://www.7-zip.org'
-        $metadata = $(Invoke-WebRequest "$site_url/download.html" -Verbose:$false).Links.href
-        $out_name = $metadata -match $(if ([Environment]::Is64BitProcess) { '7z\d.*-x64.msi' } else { '7z\d*.msi' }) | Select-Object -First 1
-        $out_file = Join-Path $TOOLS_DIR $out_name.Split('/')[-1]
-        Invoke-WebRequest -OutFile $out_file -Uri "$site_url/$out_name" -Verbose:$false
-        Write-Verbose 'Installing 7-Zip...'
-        $msi_exec = $(Get-Command 'msiexec').Path
-        & $msi_exec '/i' "$out_file" "TARGETDIR=$TOOLS_DIR" '/qb'
-        $p7zip = Join-Path $TOOLS_DIR '7z.exe'
+    if ($Name) {
+        $BASE_NAME = [System.IO.Path]::GetFileNameWithoutExtension($Name)
+    } else {
+        $BASE_NAME = 'dracula-' + $Accent.ToLower()
     }
-    catch { throw }
-} else {
-    $p7zip = $(Get-Command '7z').Path
-}
-
-if (!(Get-Command 'rsvg-convert' -ErrorAction SilentlyContinue)) {
-    if (Get-Command 'cairosvg' -ErrorAction Ignore) {
-        $librsvg = $(Get-Command 'cairosvg').Path
+    $templates = [System.Collections.Hashtable]@{
+        properties = [System.Collections.Hashtable]::new();
+        fonts      = [System.Collections.Hashtable]::new();
+        icons      = [System.Collections.Hashtable]::new();
     }
-    elseif (Get-Command 'pip3' -ErrorAction Ignore) {
-        try {
-            & $(Get-Command 'pip3').Path install cairosvg
-            & $librsvg = $(Get-Command 'cairosvg').Path
+    $SOURCE_ROOT = [System.IO.Path]::Combine($ROOT_PATH, 'res')
+    # validate configuration files such as ConvertFrom-StringData
+    $fileTemplate = [System.IO.Path]::Combine($SOURCE_ROOT, 'templates.txt')
+    if ([System.IO.File]::Exists($fileTemplate)) {
+        foreach ($line in [System.IO.File]::ReadAllLines($fileTemplate)) {
+            $line = $line.Trim().Trim('"').Trim("'")
+            if (!$line.StartsWith('#') -and !$line.Length -eq 0) {
+                [string]$value = $line.Split('=')[1].Trim().Trim('"').Trim("'")
+                [string]$name = $line.Split('=')[0].Trim().Trim('"').Trim("'")
+                switch ($name) {
+                    'font_primary' { $templates.fonts.Add($name, $value) }
+                    'font_secondary' { $templates.fonts.Add($name, $value) }
+                    'font_title' { $templates.fonts.Add($name, $value) }
+                    'font_popup' { $templates.fonts.Add($name, $value) }
+                    'font_editor' { $templates.fonts.Add($name, $value) }
+                    'font_hex' { $templates.fonts.Add($name, $value) }
+                    'title' { $templates.properties.Add($name, $titleName) }
+                    'highlight_bar_action_buttons' { $templates.properties.Add($name, $accentHex) }
+                    'highlight_bar_main_buttons' { $templates.properties.Add($name, $accentHex) }
+                    'highlight_bar_tab_buttons' { $templates.properties.Add($name, $accentHex) }
+                    'highlight_bar_tool_buttons' { $templates.properties.Add($name, $accentHex) }
+                    'highlight_visited_folder' { $templates.properties.Add($name, $accentHex) }
+                    'text_bar_tab_selected' { $templates.properties.Add($name, $accentHex) }
+                    'text_button_inverse' { $templates.properties.Add($name, $accentHex) }
+                    'text_edit_selection_foreground' { $templates.properties.Add($name, $accentHex) }
+                    'text_grid_primary_inverse' { $templates.properties.Add($name, $accentHex) }
+                    'text_link_pressed' { $templates.properties.Add($name, $accentHex) }
+                    'text_popup_header' { $templates.properties.Add($name, $accentHex) }
+                    'text_popup_primary_inverse' { $templates.properties.Add($name, $accentHex) }
+                    'text_popup_secondary_inverse' { $templates.properties.Add($name, $accentHex) }
+                    'tint_bar_tab_icons' { $templates.properties.Add($name, $accentHex) }
+                    'tint_page_separator' { $templates.properties.Add($name, $accentHex) }
+                    'tint_popup_icons' { $templates.properties.Add($name, $accentHex) }
+                    'tint_progress_bar' { $templates.properties.Add($name, $accentHex) }
+                    'tint_scroll_thumbs' { $templates.properties.Add($name, $accentHex) }
+                    'tint_tab_indicator_selected' { $templates.properties.Add($name, $accentHex) }
+                    Default { $templates.properties.Add($name, $value) }
+                }
+            }
         }
-        catch {
-            throw
-        }
-    }
-    elseif ($IsWindows) {
-        try {
-            Write-Verbose "Installing 'rsvg-convert'..."
-            $site_url = 'https://jaist.dl.sourceforge.net/project/tumagcc/rsvg-convert-2.40.20.7z'
-            $out_file = Join-Path $TOOLS_DIR $site_url.Split('/')[-1]
-            Invoke-WebRequest -OutFile $out_file -Uri $site_url -Verbose:$false
-            & $p7zip 'x' "$out_file" "-o$TOOLS_DIR" '-y' '-bso0' '-bsp0'
-            $librsvg = Join-Path $TOOLS_DIR 'rsvg-convert.exe'
-        }
-        catch {
-            throw
-        }
-    }
-    if (!$librsvg) {
-        Write-Warning "Need to install 'rsvg-convert'."
+    } else {
+        [System.Console]::WriteLine("Cannot found: $fileTemplate.")
         exit 1
     }
-} else {
-    $librsvg = $(Get-Command 'rsvg-convert').Path
-}
-
-Write-Verbose 'Converting tools:'; "- $p7zip", "- $librsvg" | Write-Verbose
-
-if ($Force) {
-    Write-Verbose 'Removing previous build files...'
-    Get-ChildItem $BUILD_DIR -File -Recurse | Remove-Item -Force
-}
-
-Get-ChildItem $ICONS_DIR -Filter '*.png' -File | Remove-Item -Force
-
-try {
-    Write-Verbose 'Converting SVG to PNG files:'
-    $metadata = Join-Path $ROOT_PATH 'res' 'drawable.csv'
-    Get-Content $metadata | ConvertFrom-Csv | ForEach-Object {
-        $i = Join-Path $ICONS_DIR $($_.name + '.svg')
-        if (Test-Path $i) {
-            $w = $_.size; $h = $_.size
-            $o = Join-Path $ICONS_DIR $($_.name + '.png')
-            Write-Verbose "- $(Join-Path 'drawable' $($_.name + '.svg'))"
-            & $librsvg '--width' "$w" '--height' "$h" '--output' "$o" "$i"
+    $sourceIconDir = [System.IO.Path]::Combine($SOURCE_ROOT, 'icons')
+    $iconConfigFile = [System.IO.Path]::Combine($SOURCE_ROOT, 'icons.csv')
+    if ([System.IO.File]::Exists($iconConfigFile)) {
+        $read = [System.IO.File]::ReadAllText($iconConfigFile)
+        $data = ConvertFrom-Csv -InputObject $read -Delimiter ','
+        for ($i = 0; $i -lt $data.Count; $i++) {
+            $name = $data.name[$i]
+            $size = $data.size[$i]
+            $templates.icons.Add($name, $size)
         }
-        else {
-            Write-Warning "Cannot found $i"
+    } else {
+        [System.Console]::WriteLine("Cannot found: $iconConfigFile.")
+        exit 1
+    }
+    if ($IsWindows -or $PSEdition -eq 'Desktop') {
+        $rsvg_convert = [System.IO.Path]::Combine($ROOT_PATH, 'bin', 'rsvg-convert.exe')
+        if ([System.IO.File]::Exists($rsvg_convert)) {
+            $addPath = [System.IO.Path]::GetDirectoryName($rsvg_convert)
+            $oldPath = [System.Environment]::GetEnvironmentVariable('Path')
+            $newpath = ($oldPath.Split(';') -notlike $addPath) + $addPath -join ';'
+            [System.Environment]::SetEnvironmentVariable('Path', $newpath)
         }
     }
-    $file_zip = $BUILD_FILENAME + '.zip'
-    $BUILD_INCLUDES = 'res', 'screenshot.png', 'README.md', 'LICENSE'
-    Out-File 'includes.txt' -Force -InputObject $(Get-ChildItem $(Resolve-Path $BUILD_INCLUDES)).FullName
-    if ($PSBoundParameters['Verbose'] -eq $true) { $q = '-bb2' } else { $q = '-bso0', '-bsp0' }
-    & $p7zip 'a' '-tzip' "$file_zip" '@includes.txt' '-xr!*.ai' '-xr!*.csv' '-xr!*.svg' '-y' $q | Write-Verbose
-    Remove-Item 'includes.txt' -Force; Write-Verbose '';
-
-    $file_mit = $BUILD_FILENAME + '.mit'
-    Move-Item $file_zip -Destination $file_mit -Force
-    Write-Verbose "The result file: $file_mit."
-
-    $file_sum = $BUILD_FILENAME + '.sha1.txt'
-    $hashes = $(Get-FileHash $file_mit SHA1).Hash.ToLower() + " *$BUILD_BASENAME.mit"
-    Out-File $file_sum -InputObject $hashes -NoNewline -Force
-    Write-Verbose "The hashes file: $file_sum."
+    $svgTool = ('rsvg-convert', 'cairosvg').ForEach({ if (Get-Command -Name $_ -ea:0) { $_ } })[0]
+    if (-not($svgTool)) {
+        [System.Console]::WriteLine("Need to install 'rsvg-convert' or 'cairosvg'.")
+        exit 1
+    } else {
+        New-Alias -Name 'svg2png' -Value "$svgTool" -Description 'Convert svg to png'
+    }
 }
-catch { throw }
-
-exit $LASTEXITCODE
+process {
+    [System.Console]::WriteLine("Building name '$BASE_NAME' with accent '$Accent'.")
+    $BUILD_ROOT = [System.IO.Path]::Combine($ROOT_PATH, 'build')
+    $buildNameDir = [System.IO.Path]::Combine($BUILD_ROOT, $BASE_NAME)
+    $buildFontDir = [System.IO.Path]::Combine($buildNameDir, 'fonts')
+    $buildIconDir = [System.IO.Path]::Combine($buildNameDir, 'drawable')
+    if ([System.IO.Directory]::Exists($buildNameDir)) {
+        [System.IO.Directory]::Delete($buildNameDir, $true)
+    }
+    foreach ($buildDir in $BUILD_ROOT, $buildFontDir, $buildIconDir) {
+        if (!([System.IO.Directory]::Exists($buildDir))) {
+            [System.IO.Directory]::CreateDirectory($buildDir) | Out-Null
+        }
+    }
+    [System.Console]::WriteLine('Copying font files...')
+    $sourceFontDir = [System.IO.Path]::Combine($SOURCE_ROOT, 'fonts')
+    foreach ($font in $templates.fonts.keys) {
+        if ($templates.fonts[$font]) {
+            $fontFileValue = $templates.fonts[$font] -replace '\\', '/'
+            $fontFileName = $fontFileValue.Split('/')[-1]
+            $fontDirName = $fontFileValue.Split('/')[-2]
+            if ($fontFileValue.EndsWith('.ttf')) {
+                if ($fontFileValue -ne "fonts/$fontDirName/$fontFileName") {
+                    $fontFileValue = "fonts/$fontDirName/$fontFileName"
+                }
+                $fromDirPath = [System.IO.Path]::Combine($sourceFontDir, $fontDirName)
+                $fromFilePath = [System.IO.Path]::Combine($fromDirPath, $fontFileName)
+                if ([System.IO.File]::Exists($fromFilePath)) {
+                    $templates.properties[$font] = $fontFileValue
+                    $destDirPath = [System.IO.Path]::Combine($buildFontDir, $fontDirName)
+                    if (!([System.IO.Directory]::Exists($destDirPath))) {
+                        [System.IO.Directory]::CreateDirectory($destDirPath) | Out-Null
+                    }
+                    foreach ($itemFile in [System.IO.Directory]::EnumerateFiles($fromDirPath)) {
+                        $itemName = [System.IO.Path]::GetFileName($itemFile)
+                        $destFilePath = [System.IO.Path]::Combine($destDirPath, $itemName)
+                        if (!([System.IO.File]::Exists($destFilePath))) {
+                            [System.IO.File]::Copy($itemFile, $destFilePath, $true)
+                        }
+                    }
+                } else {
+                    [System.Console]::WriteLine("Cannot found: $fromFilePath.")
+                }
+            } else {
+                [System.Console]::WriteLine("Is not ttf format: $fontFileValue.")
+            }
+        } else {
+            $templates.properties.Remove($font)
+        }
+    }
+    [System.Console]::WriteLine('Converting icon files...')
+    foreach ($icon in $templates.icons.keys) {
+        $inputSvgFile = [System.IO.Path]::Combine($sourceIconDir, "$icon.svg")
+        $outputPngFile = [System.IO.Path]::Combine($buildIconDir, "$icon.png")
+        if ([System.IO.File]::Exists($inputSvgFile)) {
+            try {
+                $default_folder_icon = $null; $purple_folder_icon = $null
+                if ($inputSvgFile.EndsWith('folder.svg') -and ($Accent -eq 'Purple')) {
+                    $default_folder_icon = [System.IO.File]::ReadAllText($inputSvgFile)
+                    $purple_folder_icon = $default_folder_icon -replace '\"#FF79C6\"', '"#BD93F9"'
+                    [System.IO.File]::WriteAllText($inputSvgFile, $purple_folder_icon)
+                }
+                $outputPngSize = $templates.icons[$icon]
+                if ($outputPngSize) { $resizes = '--width', "$outputPngSize", '--height', "$outputPngSize" }
+                svg2png "$inputSvgFile" '--output' "$outputPngFile" $resizes
+            } finally {
+                if ($default_folder_icon) {
+                    [System.IO.File]::WriteAllText($inputSvgFile, $default_folder_icon)
+                }
+            }
+        } else {
+            [System.Console]::WriteLine("Cannot found: $inputSvgFile.")
+        }
+    }
+    try {
+        [System.Console]::WriteLine('Generating properties file...')
+        $buildPropXml = [System.IO.Path]::Combine($buildNameDir, 'properties.xml')
+        $xmldoc = New-Object -TypeName System.Xml.XmlDocument
+        $xmldec = $xmldoc.CreateXmlDeclaration('1.0', 'utf-8', $null)
+        $xmldoc.AppendChild($xmldec) | Out-Null
+        $elroot = $xmldoc.CreateElement('properties')
+        $xmldoc.AppendChild($elroot) | Out-Null
+        foreach ($item in $templates.properties.keys) {
+            if ($templates.properties[$item]) {
+                $child = $xmldoc.CreateElement('entry')
+                $child.SetAttribute('key', $item)
+                $child.InnerText = $templates.properties[$item]
+                $elroot.AppendChild($child) | Out-Null
+            }
+        }
+    } finally {
+        $xmldoc.Save($buildPropXml)
+    }
+}
+end {
+    try {
+        [System.Console]::WriteLine('Packaging theme files...')
+        $filepack = $buildNameDir + '.mit'
+        if ([System.IO.File]::Exists($filepack)) {
+            [System.IO.File]::Delete($filepack)
+        }
+        [System.Reflection.Assembly]::LoadWithPartialName('System.IO.Compression.FileSystem') | Out-Null
+        $level = [System.IO.Compression.CompressionLevel]::Optimal
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($buildNameDir, $filepack, $level, $false)
+        $mode = [System.IO.Compression.ZipArchiveMode]::Update
+        $stream = [System.IO.Compression.ZipFile]::Open($filepack, $mode)
+        foreach ($file in 'screenshot.png', 'README.md', 'LICENSE') {
+            $path = [System.IO.Path]::Combine($ROOT_PATH, $file)
+            if ([System.IO.File]::Exists($path)) {
+                [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+                    $stream, $path, $file, $level) | Out-Null
+            }
+        }
+    } finally {
+        $stream.Dispose()
+    }
+    try {
+        $filehash = $filepack + '.sha1'
+        $alg = [System.Security.Cryptography.HashAlgorithm]::Create('SHA1')
+        $rel = [System.IO.Path]::GetFileName($filepack)
+        $fs = [System.IO.File]::OpenRead($filepack)
+        $bytes = $alg.ComputeHash($fs).ForEach({ $_.ToString('x2') })
+        $lines = [string]::Join('', $bytes) + ' *' + $rel
+        [System.IO.File]::WriteAllText($filehash, $lines)
+    } finally {
+        $fs.Dispose()
+        $alg.Dispose()
+    }
+    if ($Force -and [System.IO.Directory]::Exists($buildNameDir)) {
+        [System.IO.Directory]::Delete($buildNameDir, $true)
+    }
+    [System.Console]::WriteLine('Finished. packaged file results:')
+    [System.IO.Directory]::GetFiles($BUILD_ROOT, "$BASE_NAME.*")
+}

@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "davidanson.vscode-markdownlint",
+    "dotjoshjohnson.xml",
+    "editorconfig.editorconfig",
+    "github.vscode-github-actions",
+    "jock.svg",
+    "ms-vscode.powershell",
+    "naumovs.color-highlight",
+    "redhat.vscode-xml",
+    "redhat.vscode-yaml",
+    "usernamehw.errorlens",
+    "chouzz.vscode-better-align"
+  ]
+}
