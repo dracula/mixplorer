@@ -32,7 +32,7 @@ try {
         $newDate = [string]::Format('{0:yyyy-MM-dd}', [datetime]::Now)
         $oldHeader = "^## \[$version\] - \d{4}-\d{2}-\d{2}"
         $newHeader = "## [$version] - $newDate"
-        if ($oldHeader -ne $newHeader) {
+        if ($header[0] -ne $newHeader) {
             $newChangelogDate = $readLines -replace $oldHeader, $newHeader
             [System.IO.File]::WriteAllLines($CHANGELOG, $newChangelogDate)
         }
