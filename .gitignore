@@ -1,4 +1,3 @@
-/bin/**/*
 /build/*
 /res/drawable/*.png
 /template*
