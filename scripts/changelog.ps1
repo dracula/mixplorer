@@ -1,9 +1,15 @@
-#!/usr/bin/pwsh -c
+[CmdletBinding(DefaultParameterSetName = 'WithHeader')]
 param (
     # Save as output to file name.
+    [Parameter(ParameterSetName = 'WithHeader')]
+    [Parameter(ParameterSetName = 'NoWithHeader')]
     [Alias('o')][string]$OutFile,
     # Update header date to current date.
-    [Alias('u')][switch]$NowDate
+    [Parameter(ParameterSetName = 'WithHeader')]
+    [Alias('u')][switch]$NowDate,
+    # Remove first header.
+    [Parameter(ParameterSetName = 'NoWithHeader')]
+    [Alias('n')][switch]$NoHeader
 )
 
 $ROOT_PATH = [System.IO.Path]::GetFullPath("$PSScriptRoot/..")
@@ -21,7 +27,8 @@ if ($OutFile -and $OutFile.EndsWith('CHANGELOG.md')) {
 [System.Console]::InputEncoding = [System.Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()
 $readLines = [System.IO.File]::ReadAllLines($inFileChangelog).Trim()
 $headings = $readLines -match '^##.\[([\d.]+)\].-.\d{4}-\d{2}-\d{2}'
-$footers = $readLines -match '^\[Full Changelog\]\(.*\)'
+$footers = $readLines -match '\[Full Changelog\]'
+$headDefs = $readLines -match '\[([\d.]+)\]\:'
 $currentDate = [string]::Format('{0:yyyy-MM-dd}', [datetime]::Now)
 
 $startHeader = $headings[0]
@@ -29,15 +36,21 @@ $startHeader = $headings[0]
 if ($startHeader) {
     $writeLines = [System.Collections.Generic.List[string]]::new()
     foreach ($line in $readLines) {
-        if ($line -eq $footers[0]) { $writeLines.Add($line); break }
-        if ($line -eq $headings[1]) { break }; $writeLines.Add($line)
-    }
-    if ($NowDate) {
-        $semanticVersion = $startHeader.Split(' ')[1].Trim('[]')
-        $newStartHeader = "## [$semanticVersion] - $currentDate"
-        if ($startHeader -ne $newStartHeader) {
-            $writeLines = $writeLines -replace $startHeader, $newStartHeader
+        $line = $line.Trim()
+        if ($line.Contains($headings[1])) { break };
+        if ($line.Contains($footers[0])) { $writeLines.Add($line); break }
+        if ($line.Contains($startHeader) -and $NowDate) {
+            $semanticVersion = $startHeader.Split(' ')[1].Trim('[]')
+            $newStartHeader = "## [$semanticVersion] - $currentDate"
+            $line = $line -replace $startHeader, $newStartHeader
         }
+        $writeLines.Add($line)
+    }
+    if ($NoHeader) {
+        if ($writeLines[0].Contains($startHeader)) { $writeLines.RemoveAt(0) }
+        if ($writeLines[0].Length -eq 0) { $writeLines.RemoveAt(0) }
+    } elseif ($headDefs[0]) {
+        $writeLines.Add($null); $writeLines.Add($headDefs[0])
     }
     if ($OutFile) {
         $DirPath = [System.IO.Path]::GetDirectoryName([System.IO.Path]::GetFullPath($OutFile))
