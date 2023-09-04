@@ -2,19 +2,23 @@ name: build
 
 on:
   push:
-    branches: ['main', 'master']
+    paths:
+      - '**.md'
+      - 'bin/**'
+      - 'res/**'
+      - 'scripts/**'
+      - 'screenshot.png'
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
-  pull_request:
-    branches: ['master', 'future']
   workflow_dispatch:
+
+permissions: write-all
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build-release:
     runs-on: ubuntu-latest
-    permissions: write-all
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,21 +26,25 @@ jobs:
         shell: pwsh
         run: |
           sudo apt-get install -y librsvg2-bin
-          ./scripts/build.ps1 -a Pink -f
-          ./scripts/build.ps1 -a Purple -f
+          ./scripts/build.ps1 -a pink -f
+          ./scripts/build.ps1 -a purple -f
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
         # if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v3
         with:
           name: build-artifact
           path: ./build/*.*
           retention-days: 7
       - name: Create release
-        uses: anton-yurchenko/git-release@v5
         if: startsWith(github.ref, 'refs/tags/')
-        env:
-          ALLOW_EMPTY_CHANGELOG: true
-          CHANGELOG_FILE: CHANGELOG.md
-          DRAFT_RELEASE: true
-        with:
-          args: ./build/*.*
+        shell: pwsh
+        run: |
+          $tag = '${{ github.ref_name }}'
+          $files = resolve-path ./build/*.* -relative -ea:0
+          if (!$files) { 'cannot find files on ./build'; exit 1 }
+          ./scripts/changelog.ps1 -n -o ./changes.md
+          if (test-path ./changes.md) {
+            gh release create $tag $files -F ./changes.md --verify-tag
+          } else {
+            gh release create $tag $files --verify-tag
+          }
