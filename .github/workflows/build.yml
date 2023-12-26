@@ -1,50 +1,39 @@
-name: build
-
 on:
   push:
-    paths:
-      - '**.md'
-      - 'bin/**'
-      - 'res/**'
-      - 'scripts/**'
-      - 'screenshot.png'
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-  workflow_dispatch:
-
-permissions: write-all
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - 'v*'
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - 'master'
 
 jobs:
-  build-release:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # allows the action to create a release.
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Build package
-        shell: pwsh
-        run: |
+      - uses: actions/checkout@v4
+      - run: |
           sudo apt-get install -y librsvg2-bin
-          ./scripts/build.ps1 -a pink -f
-          ./scripts/build.ps1 -a purple -f
-      - name: Upload artifact
-        # if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: actions/upload-artifact@v3
+          pwsh -File ./tools/build.ps1 -a pink
+          pwsh -File ./tools/build.ps1 -a purple
+      - uses: actions/upload-artifact@v3
         with:
-          name: build-artifact
+          name: dracula-artifact
           path: ./build/*.*
-          retention-days: 7
-      - name: Create release
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: pwsh
+        if: github.ref == 'refs/heads/master' || github.event_name == 'pull_request'
+      - if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = '${{ github.ref_name }}'
-          $files = resolve-path ./build/*.* -relative -ea:0
-          if (!$files) { 'cannot find files on ./build'; exit 1 }
-          ./scripts/changelog.ps1 -n -o ./changes.md
-          if (test-path ./changes.md) {
-            gh release create $tag $files -F ./changes.md --verify-tag
-          } else {
-            gh release create $tag $files --verify-tag
-          }
+          files=$(find ./build -maxdepth 1 -type f)
+          pwsh -File ./tools/changelog.ps1 > ./release_notes.txt
+          gh release create ${{ github.ref_name }} $files \
+            --title ${{ github.ref_name }} \
+            --notes-file ./release_notes.txt \
+            --generate-notes \
+            --draft=false \
+            --prerelease=false \
+            --verify-tag
