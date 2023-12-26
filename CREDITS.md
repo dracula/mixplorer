@@ -3,10 +3,11 @@
 ## Tools
 
 - [rsvg-convert](https://gitlab.gnome.org/GNOME/librsvg) ([GNU](https://gitlab.gnome.org/GNOME/librsvg/-/raw/main/COPYING.LIB))
+- [CairoSVG](https://github.com/Kozea/CairoSVG) ([GNU](https://raw.githubusercontent.com/Kozea/CairoSVG/main/LICENSE))
 
 ## Icons
 
-- [Iconsax](https://github.com/glenthemes/iconsax)([LICENSE](https://iconsax.io/#license))
+- [Iconsax](https://github.com/glenthemes/iconsax) ([LICENSE](https://iconsax.io/#license))
 - [Tabler Icons](https://github.com/tabler/tabler-icons) ([MIT](https://github.com/tabler/tabler-icons/blob/master/LICENSE))
 - [SVG Repo](https://www.svgrepo.com) ([LICENSE](https://www.svgrepo.com/page/licensing/))
 
