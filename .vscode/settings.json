@@ -1,19 +1,28 @@
 {
+  "editor.fontFamily": "'JetBrains Mono', Consolas, 'Courier New', monospace",
+  "editor.fontSize": 18,
   "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.lineHeight": 28,
   "editor.linkedEditing": true,
+  "editor.minimap.autohide": true,
+  "editor.minimap.maxColumn": 60,
   "editor.renderWhitespace": "all",
   "editor.wordWrap": "off",
   "markdownlint.config": {
     "MD024": false,
     "MD041": false
   },
-  "powershell.analyzeOpenDocumentsOnly": true,
-  "powershell.codeFormatting.addWhitespaceAroundPipe": true,
-  "powershell.codeFormatting.alignPropertyValuePairs": true,
+  "[powershell]": {
+    "files.trimTrailingWhitespace": true
+  },
+  "powershell.analyzeOpenDocumentsOnly": false,
   "powershell.codeFormatting.autoCorrectAliases": true,
   "powershell.codeFormatting.preset": "OTBS",
   "powershell.codeFormatting.useConstantStrings": true,
   "powershell.codeFormatting.useCorrectCasing": true,
   "powershell.codeFormatting.whitespaceBetweenParameters": true,
+  "terminal.integrated.fontFamily": "'Hack Nerd Font', Consolas, monospace",
+  "terminal.integrated.shellIntegration.suggestEnabled": true,
   "workbench.sideBar.location": "right"
 }
