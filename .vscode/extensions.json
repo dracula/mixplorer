@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "davidanson.vscode-markdownlint",
-    "dotjoshjohnson.xml",
     "editorconfig.editorconfig",
     "github.vscode-github-actions",
     "jock.svg",
@@ -10,6 +9,7 @@
     "redhat.vscode-xml",
     "redhat.vscode-yaml",
     "usernamehw.errorlens",
-    "chouzz.vscode-better-align"
+    "chouzz.vscode-better-align",
+    "shardulm94.trailing-spaces"
   ]
 }
