@@ -181,8 +181,8 @@ foreach ($key in $iniData['icons'].Keys) {
         $dimensions = $iniData['icons'][$key]
         if ($dimensions) {
             $w, $h = ($dimensions -split ',')[0..1]
-            if ($w) { $options += '--height', $w }
-            if ($h) { $options += '--width', $h }
+            if ($w) { $options += '--width', $w }
+            if ($h) { $options += '--height', $h }
         }
         if ($svgFile.EndsWith('folder.svg') -and ($Accent -eq 'Purple')) {
             $default = [System.IO.File]::ReadAllText($svgFile)
