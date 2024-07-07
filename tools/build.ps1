@@ -28,7 +28,7 @@
 param (
     [Alias('n')][string]$Name,
     [ValidateSet('Pink', 'Purple')]
-    [Alias('a')][string]$Accent,
+    [Alias('a')][string]$Accent = 'Pink',
     [Alias('f')][switch]$Force
 )
 
