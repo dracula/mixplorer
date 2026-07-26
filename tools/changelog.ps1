@@ -9,11 +9,6 @@ param (
 $examples = @'
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
 
 <!-- changes that have been set but not yet released -->
@@ -28,13 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Some issues
 
-## [1.0.0] - 2010-01-10]
+### Changed
 
-_Initial commits._
+- Some changes
+
+### Removed
+
+- Some removed features
+
+## [1.0.0] - 2010-01-10
+
+### Added
+
+- Initial release.
 
 [unreleased]: <https://github.com/owner/repo/compare/v2.0.0...HEAD>
 [2.0.0]: <https://github.com/owner/repo/compare/v1.0.0...v2.0.0>
 [1.0.0]: <https://github.com/owner/repo/commits/v1.0.0>
+
 '@
 
 if ($Example) { return $examples }
@@ -79,16 +85,3 @@ if ($h1 -and $h2) {
     "Incorrect syntax! for example:`n" + $examples
     exit 1
 }
-
-# function splitlines([string[]]$Data) {
-#     # Convert the string into an array of lines
-#     $lines = $Data -split "\r?\n"
-#     # $lines = $Data -split "`n"
-#     # Iterate through each line
-#     for ($line in $lines) { $line }
-# }
-
-# $results = '^##\s\[[\d.]+\][^#\n]+([\W\w]*?)^##[^#\n]+'
-# $h2 = '##\s+\[[\d.]+\]\s+-\s+\d{4}-\d{2}-\d{2}'
-# $h2_n = '(^|\n)##\s+\[[\d.]+\]\s+-\s+\d{4}-\d{2}-\d{2}'
-# $h2_e = '\[[\d.]+\]:.*'

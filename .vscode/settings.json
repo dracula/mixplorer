@@ -5,7 +5,6 @@
   "editor.formatOnType": true,
   "editor.lineHeight": 28,
   "editor.linkedEditing": true,
-  "editor.minimap.autohide": true,
   "editor.minimap.maxColumn": 60,
   "editor.renderWhitespace": "all",
   "editor.wordWrap": "off",

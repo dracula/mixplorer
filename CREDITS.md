@@ -13,7 +13,6 @@
 
 ## Fonts
 
-- [Fira Code](https://github.com/tonsky/FiraCode) ([MIT](https://github.com/tonsky/FiraCode/blob/master/LICENSE))
 - [Google Fonts](https://fonts.google.com/) ([OFL](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL), _etc._)
 
 ## Forums
