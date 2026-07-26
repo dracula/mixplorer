@@ -10,9 +10,19 @@
     Specifies the accent color for the theme. Available options: 'Pink', 'Purple'.
 .PARAMETER Force
     Indicates whether to force overwrite existing files or directories.
+.PARAMETER Force
+    Indicates whether to force overwrite existing files or directories.
 .NOTES
-    This script assumes the availability of 'rsvg-convert' or 'cairosvg' tools for
-    SVG to PNG conversion.
+    Requires the 'resvg' CLI (https://github.com/linebender/resvg) to already
+    be installed and available on PATH.
+
+    Any property in config.ini's [colors] section whose value is the literal
+    token '@accent' will be resolved at build time to the color selected via
+    -Accent. This means adding/removing which UI elements follow the accent
+    color only requires editing config.ini — build.ps1 never needs to be
+    touched again for that purpose. The same applies to any icon SVG file
+    that contains the default accent hex (#FF79C6): it will automatically be
+    recolored for non-default accents.
 .EXAMPLE
     .\build.ps1 -Name "MyTheme" -Accent "Pink"
     Generates a Dracula theme named 'MyTheme' with a pink accent color.
@@ -22,6 +32,8 @@
     files or directories.
 .LINK
     https://draculatheme.com/mixplorer
+.LINK
+    https://github.com/linebender/resvg
 #>
 
 [CmdletBinding()]
@@ -31,6 +43,15 @@ param (
     [Alias('a')][string]$Accent = 'Pink',
     [Alias('f')][switch]$Force
 )
+
+# Single source of truth for accent colors. Add a new accent here (and to
+# the ValidateSet above) and everything else keeps working automatically.
+$ACCENT_COLORS = @{
+    'Pink'   = '#FF79C6'
+    'Purple' = '#BD93F9'
+}
+$ACCENT_TOKEN = '@accent'
+$colorCode = $ACCENT_COLORS[$Accent]
 
 $BASE_NAME = if ($Name) {
     [System.IO.Path]::GetFileNameWithoutExtension($Name)
@@ -43,32 +64,26 @@ $ROOT_PATH = [System.IO.Path]::GetFullPath("$PSScriptRoot/..")
 $BUILD_PATH = [System.IO.Path]::Combine($ROOT_PATH, 'build')
 $SOURCE_PATH = [System.IO.Path]::Combine($ROOT_PATH, 'res')
 
-# Check executable 'rsvg-convert' or 'cairosvg' path
-$svgTools = @('rsvg-convert', 'cairosvg')
-$svgTool , $sep = $null, [System.IO.Path]::PathSeparator
-if ($IsWindows -or $PSEdition -eq 'Desktop') {
-    $svgTools = $svgTools.ForEach({ [System.IO.Path]::ChangeExtension($_, 'exe') })
-    $rsvg_convert = [System.IO.Path]::Combine($ROOT_PATH, 'bin', 'rsvg-convert.exe')
-    if ([System.IO.File]::Exists($rsvg_convert)) {
-        # $svgTool = [System.IO.FileInfo]::new($rsvg_convert)
-        $addPath = [System.IO.Path]::GetDirectoryName($rsvg_convert)
-        $oldPath = [System.Environment]::GetEnvironmentVariable('Path')
-        $newPath = ($oldPath -split $sep -notlike $addPath) + $addPath -join $sep
-        [System.Environment]::SetEnvironmentVariable('Path', $newPath)
-    }
-}
-foreach ($tool in $svgTools) {
-    $paths = $env:PATH -split $sep
-    foreach ($path in $paths) {
-        $toolPath = [System.IO.Path]::Combine($path, $tool)
-        if (-not $svgTool -and [System.IO.File]::Exists($toolPath)) {
-            $svgTool = [System.IO.FileInfo]::new($toolPath)
-        }
-    }
-}
-if (-not $svgTool) {
-    [System.Console]::WriteLine("No svg tools 'rsvg-convert' or 'cairosvg' found!")
+# resvg must be installed and available on PATH before running this script
+# (e.g. via the official releases: https://github.com/linebender/resvg/releases).
+$resvgTool = (Get-Command -Name 'resvg' -CommandType Application -ErrorAction SilentlyContinue).Source
+if (-not $resvgTool) {
+    [System.Console]::WriteLine('resvg not found on PATH. Install it first: https://github.com/linebender/resvg/releases')
     exit 1
+}
+
+function ConvertTo-Png {
+    param(
+        [string]$ToolPath,
+        [string]$InputSvg,
+        [string]$OutputPng,
+        [string]$Width,
+        [string]$Height
+    )
+    $cliArgs = @($InputSvg, $OutputPng)
+    if ($Width) { $cliArgs += '--width', $Width }
+    if ($Height) { $cliArgs += '--height', $Height }
+    & "$ToolPath" @cliArgs
 }
 
 $iniFile = [System.IO.Path]::Combine($SOURCE_PATH, 'config.ini')
@@ -104,25 +119,17 @@ if ([System.IO.File]::Exists($iniFile)) {
     exit 1
 }
 
-if ($Accent -eq 'Purple') {
-    $colorCode = '#BD93F9'
-    $iniData['properties']['title'] = 'Dracula Purple'
-} else {
-    $iniData['properties']['title'] = 'Dracula'
-    $colorCode = '#FF79C6'
-}
+$iniData['properties']['title'] = if ($Accent -eq 'Pink') { 'Dracula' } else { "Dracula $Accent" }
 
-@(
-    'highlight_bar_action_buttons', 'highlight_bar_main_buttons',
-    'highlight_bar_tab_buttons', 'highlight_bar_tool_buttons',
-    'highlight_visited_folder', 'text_bar_tab_selected',
-    'text_button_inverse', 'text_edit_selection_foreground',
-    'text_grid_primary_inverse', 'text_link_pressed',
-    'text_popup_header', 'text_popup_primary_inverse',
-    'text_popup_secondary_inverse', 'tint_bar_tab_icons',
-    'tint_page_separator', 'tint_popup_icons', 'tint_progress_bar',
-    'tint_scroll_thumbs', 'tint_tab_indicator_selected'
-).ForEach({ $iniData['properties']["$_"] = "$colorCode" })
+# Resolve every '@accent' placeholder in config.ini to the chosen accent
+# color. This replaces the old hardcoded key list: any property (existing
+# or newly added later) that should follow the accent color just needs its
+# value set to '@accent' in config.ini — nothing to update here.
+foreach ($key in @($iniData['properties'].Keys)) {
+    if ($iniData['properties'][$key] -eq $ACCENT_TOKEN) {
+        $iniData['properties'][$key] = $colorCode
+    }
+}
 
 $BUILD_NAME = [System.IO.Path]::Combine($BUILD_PATH, $BASE_NAME)
 $BUILD_ICON = [System.IO.Path]::Combine($BUILD_NAME, 'drawable')
@@ -177,21 +184,35 @@ foreach ($key in $iniData['icons'].Keys) {
     $svgfile = [System.IO.Path]::Combine($SOURCE_PATH, 'icons', "$key.svg")
     $pngfile = [System.IO.Path]::Combine($BUILD_ICON, "$key.png")
     if ([System.IO.File]::Exists($svgfile)) {
-        $options = '--format', 'png', '--output', $pngfile, $svgfile
+        $w, $h = $null, $null
         $dimensions = $iniData['icons'][$key]
         if ($dimensions) {
             $w, $h = ($dimensions -split ',')[0..1]
-            if ($w) { $options += '--width', $w }
-            if ($h) { $options += '--height', $h }
         }
-        if ($svgFile.EndsWith('folder.svg') -and ($Accent -eq 'Purple')) {
-            $default = [System.IO.File]::ReadAllText($svgFile)
-            $purples = $default -replace '#FF79C6', '#BD93F9'
-            $tmpfile = [System.IO.Path]::GetTempFileName()
-            [System.IO.File]::WriteAllText($tmpfile, $purples)
-            $options = ($options -notlike $svgfile) + $tmpfile
+
+        # Any icon whose SVG markup contains the default (Pink) accent hex
+        # gets recolored to the selected accent automatically — no need to
+        # special-case specific filenames like 'folder.svg' anymore.
+        $renderInput = $svgfile
+        $tmpfile = $null
+        if ($colorCode -ne $ACCENT_COLORS['Pink']) {
+            $svgContent = [System.IO.File]::ReadAllText($svgfile)
+            if ($svgContent -match [regex]::Escape($ACCENT_COLORS['Pink'])) {
+                $recolored = $svgContent -replace [regex]::Escape($ACCENT_COLORS['Pink']), $colorCode
+                $tmpfile = [System.IO.Path]::Combine(
+                    [System.IO.Path]::GetTempPath(), "$([guid]::NewGuid()).svg"
+                )
+                [System.IO.File]::WriteAllText($tmpfile, $recolored)
+                $renderInput = $tmpfile
+            }
         }
-        & "$svgTool" $options
+
+        ConvertTo-Png -ToolPath $resvgTool `
+            -InputSvg $renderInput `
+            -OutputPng $pngfile `
+            -Width $w `
+            -Height $h
+
         if ($tmpfile -and [System.IO.File]::Exists($tmpfile)) {
             [System.IO.File]::Delete($tmpfile)
         }
@@ -262,5 +283,4 @@ if ($Force -and [System.IO.Directory]::Exists($BUILD_NAME)) {
     [System.IO.Directory]::Delete($BUILD_NAME, $true)
 }
 
-# [System.IO.Directory]::GetFiles($BUILD_PATH, "$BASE_NAME.*")
-
+[System.IO.Directory]::GetFiles($BUILD_PATH, "$BASE_NAME.*")

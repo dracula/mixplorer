@@ -2,11 +2,11 @@ on:
   push:
     tags:
       - 'v*'
-    branches:
-      - 'master'
-  pull_request:
-    branches:
-      - 'master'
+
+env:
+  # Pin the resvg version explicitly. Bumping this value automatically
+  # invalidates the cache below and pulls the new version once.
+  RESVG_VERSION: v0.47.0
 
 jobs:
   build:
@@ -15,8 +15,36 @@ jobs:
       contents: write # allows the action to create a release.
     steps:
       - uses: actions/checkout@v4
+
+      # Cache lives outside the repo (~/.cache), not in a repo 'bin' folder.
+      # This only saves the download — resvg still gets installed onto PATH
+      # (/usr/local/bin) on every run, since the runner filesystem outside
+      # the cache path doesn't persist between runs anyway.
+      - name: Cache resvg download
+        id: cache-resvg
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/resvg/resvg
+          key: resvg-${{ runner.os }}-${{ env.RESVG_VERSION }}
+
+      - name: Download resvg
+        if: steps.cache-resvg.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cache/resvg
+          curl -sSL -o resvg.tar.gz \
+            "https://github.com/linebender/resvg/releases/download/${RESVG_VERSION}/resvg-linux-x86_64.tar.gz"
+          tar -xzf resvg.tar.gz resvg
+          chmod +x resvg
+          mv resvg ~/.cache/resvg/resvg
+          rm -f resvg.tar.gz
+
+      - name: Install resvg onto PATH
+        run: |
+          sudo install -m 755 ~/.cache/resvg/resvg /usr/local/bin/resvg
+          resvg --version
+
       - run: |
-          sudo apt-get install -y librsvg2-bin
           pwsh -File ./tools/build.ps1 -a pink
           pwsh -File ./tools/build.ps1 -a purple
       - uses: actions/upload-artifact@v4
