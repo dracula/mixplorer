@@ -15,27 +15,13 @@ $examples = @'
 
 ## [2.0.0] - 2020-02-20
 
-### Added
+- [Added] - features
+- [Fixed] - issues
+- [Removed] - features
 
-- Some features
+## [1.0.0] - 2021-10-22
 
-### Fixed
-
-- Some issues
-
-### Changed
-
-- Some changes
-
-### Removed
-
-- Some removed features
-
-## [1.0.0] - 2010-01-10
-
-### Added
-
-- Initial release.
+- [Added] - Initial release.
 
 [unreleased]: <https://github.com/owner/repo/compare/v2.0.0...HEAD>
 [2.0.0]: <https://github.com/owner/repo/compare/v1.0.0...v2.0.0>
