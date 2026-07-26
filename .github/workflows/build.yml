@@ -19,7 +19,7 @@ jobs:
           sudo apt-get install -y librsvg2-bin
           pwsh -File ./tools/build.ps1 -a pink
           pwsh -File ./tools/build.ps1 -a purple
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: dracula-artifact
           path: ./build/*.*
